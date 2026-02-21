@@ -11,3 +11,4 @@ export {
   type IndexStats,
   type DocumentsQuery,
 } from './clients/elasticsearch';
+export { MySQLClient, type TableInfo, type ColumnInfo, type QueryResult } from './clients/mysql';

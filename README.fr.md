@@ -10,7 +10,7 @@ npm install -D @duwab/test-kit
 
 ## Démarrage des Services
 
-Pour démarrer tous les services (RabbitMQ, Redis, Elasticsearch) :
+Pour démarrer tous les services (RabbitMQ, Redis, Elasticsearch, MySQL) :
 
 ```bash
 docker-compose up -d
@@ -110,6 +110,55 @@ const resultats = await client.search({
 
 // Sauvegarder l'état
 await client.dump('./snapshot-elasticsearch.json', { pretty: true });
+
+await client.disconnect();
+```
+
+### MySQL
+
+```typescript
+import { MySQLClient } from '@duwab/test-kit';
+
+const client = new MySQLClient({
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: 'root',
+  database: 'test',
+});
+
+await client.connect();
+
+// Créer une table
+await client.query(`
+  CREATE TABLE IF NOT EXISTS utilisateurs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE
+  )
+`);
+
+// Insérer des données
+const userId = await client.insert('utilisateurs', {
+  nom: 'Jean Dupont',
+  email: 'jean@example.com',
+});
+
+// Requête
+const utilisateurs = await client.queryAll('SELECT * FROM utilisateurs');
+const utilisateur = await client.queryOne('SELECT * FROM utilisateurs WHERE id = ?', [userId]);
+
+// Mettre à jour
+await client.update('utilisateurs', { nom: 'Jane Dupont' }, { email: 'jean@example.com' });
+
+// Supprimer
+await client.delete('utilisateurs', { id: userId });
+
+// Infos de la table
+const tableInfo = await client.getTableInfo('utilisateurs');
+
+// Sauvegarder l'état
+await client.dump('./snapshot-mysql.json', { pretty: true });
 
 await client.disconnect();
 ```

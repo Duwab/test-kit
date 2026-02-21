@@ -4,12 +4,12 @@ A npm package written in Typescript to help running e2e tests for NodeJS and Typ
 
 ## Main Features
 
-* **Client libraries** for RabbitMQ, Redis, ElasticSearch
+* **Client libraries** for RabbitMQ, Redis, ElasticSearch, MySQL
   * Simplified client creation with credentials
   * Helper methods to create/update/read/delete resources
   * Global listing functions
   * Resource state reset/dump/restore functionality
-  * Access to official clients without abstractions (`amqplib`, `ioredis`, `@elastic/elasticsearch`)
+  * Access to official clients without abstractions (`amqplib`, `ioredis`, `@elastic/elasticsearch`, `mysql2/promise`)
 * **Service introspection** capabilities
   * Health checks via `GET /healthz`
   * Introspection endpoints via `GET /introspection`
@@ -36,6 +36,7 @@ This will start:
 - **RabbitMQ** on `localhost:5672` (Management UI: `localhost:15672`)
 - **Redis** on `localhost:6379`
 - **ElasticSearch** on `localhost:9200`
+- **MySQL** on `localhost:3306`
 
 To stop services:
 
@@ -163,6 +164,60 @@ await client.restore('./snapshots/elasticsearch.json');
 await client.disconnect();
 ```
 
+### MySQL Client
+
+```typescript
+import { MySQLClient } from '@duwab/test-kit';
+
+const client = new MySQLClient({
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: 'root',
+  database: 'test',
+});
+
+await client.connect();
+
+// Create a table
+await client.query(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE
+  )
+`);
+
+// Insert data
+const userId = await client.insert('users', {
+  name: 'John Doe',
+  email: 'john@example.com',
+});
+
+// Query data
+const users = await client.queryAll('SELECT * FROM users');
+const user = await client.queryOne('SELECT * FROM users WHERE id = ?', [userId]);
+
+// Update data
+await client.update('users', { name: 'Jane Doe' }, { email: 'john@example.com' });
+
+// Delete data
+await client.delete('users', { id: userId });
+
+// Get table information
+const tableInfo = await client.getTableInfo('users');
+console.log(tableInfo);
+
+// Get official mysql2/promise client
+const mysqlConn = await client.getOfficialClient();
+
+// Dump and restore state
+await client.dump('./snapshots/mysql.json', { pretty: true });
+await client.restore('./snapshots/mysql.json');
+
+await client.disconnect();
+```
+
 ## Project Structure
 
 ```
@@ -172,7 +227,8 @@ await client.disconnect();
 │   └── clients/
 │       ├── rabbitmq.ts            # RabbitMQ client implementation
 │       ├── redis.ts               # Redis client implementation
-│       └── elasticsearch.ts       # ElasticSearch client implementation
+│       ├── elasticsearch.ts       # ElasticSearch client implementation
+│       └── mysql.ts               # MySQL client implementation
 ├── examples/
 │   └── usage.ts                   # Usage examples for all clients
 ├── tests/
@@ -269,6 +325,15 @@ This will:
 - ✅ Bulk document operations
 - ✅ State dump/restore
 - ✅ Official Elasticsearch client access
+
+### MySQL
+- ✅ Table and schema management
+- ✅ CRUD operations (insert, select, update, delete)
+- ✅ Query execution with parameters
+- ✅ Table statistics and information
+- ✅ Bulk operations (truncate all, etc)
+- ✅ State dump/restore
+- ✅ Official mysql2/promise client access
 
 ## Contributing
 

@@ -10,6 +10,7 @@ export namespace TestKit {
     password?: string;
     vhost?: string;
     db?: number;
+    database?: string;
     [key: string]: any;
   }
 
@@ -21,7 +22,7 @@ export namespace TestKit {
 
   export interface Snapshot {
     timestamp: number;
-    provider: 'rabbitmq' | 'redis' | 'elasticsearch';
+    provider: 'rabbitmq' | 'redis' | 'elasticsearch' | 'mysql';
     version: string;
     data: unknown;
   }
@@ -80,5 +81,25 @@ export namespace TestKit {
     index: string;
     size?: number;
     query?: Record<string, any>;
+  }
+
+  // MySQL Types
+  export interface MySQLTableInfo {
+    name: string;
+    rowCount: number;
+    columns: MySQLColumnInfo[];
+  }
+
+  export interface MySQLColumnInfo {
+    name: string;
+    type: string;
+    nullable: boolean;
+    key: string;
+  }
+
+  export interface MySQLQueryResult<T = any> {
+    rows: T[];
+    fields: any[];
+    affectedRows?: number;
   }
 }

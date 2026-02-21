@@ -79,6 +79,27 @@ services:
         soft: -1
         hard: -1
 
+  # MySQL service for database testing
+  mysql:
+    image: mysql:8.0-alpine
+    container_name: test-kit-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_LOG_CONSOLE: 'false'
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: mysqladmin ping -h localhost -u root -proot
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - test-kit-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+
 networks:
   test-kit-network:
     driver: bridge
@@ -90,4 +111,6 @@ volumes:
   redis-data:
     driver: local
   elasticsearch-data:
+    driver: local
+  mysql-data:
     driver: local

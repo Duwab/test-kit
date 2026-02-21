@@ -59,6 +59,26 @@ services:
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
+  # MySQL service
+  mysql:
+    image: mysql:8.0-alpine
+    container_name: test-kit-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_LOG_CONSOLE: 'false'
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: mysqladmin ping -h localhost -u root -proot
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-kit-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+
 networks:
   test-kit-network:
     driver: bridge
@@ -66,3 +86,4 @@ networks:
 volumes:
   redis-data:
   elasticsearch-data:
+  mysql-data:

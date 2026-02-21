@@ -2,7 +2,7 @@
  * Example test file showing how to use the test-kit clients
  */
 
-import { RabbitMQClient, RedisClient, ElasticSearchClient } from '../src/index';
+import { RabbitMQClient, RedisClient, ElasticSearchClient, MySQLClient } from '../src/index';
 
 // Example: Using RabbitMQ Client
 async function exampleRabbitMQ() {
@@ -102,6 +102,56 @@ async function exampleElasticSearch() {
   await esClient.disconnect();
 }
 
+// Example: Using MySQL Client
+async function exampleMySQL() {
+  const mysqlClient = new MySQLClient({
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'test',
+  });
+
+  await mysqlClient.connect();
+
+  // Create a table
+  await mysqlClient.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) UNIQUE
+    )
+  `);
+
+  // Insert data
+  const userId = await mysqlClient.insert('users', {
+    name: 'John Doe',
+    email: 'john@example.com',
+  });
+  console.log('MySQL Insert ID:', userId);
+
+  // Query data
+  const users = await mysqlClient.queryAll('SELECT * FROM users');
+  console.log('MySQL Users:', users);
+
+  // Update data
+  const updated = await mysqlClient.update(
+    'users',
+    { name: 'Jane Doe' },
+    { email: 'john@example.com' }
+  );
+  console.log('MySQL Updated Rows:', updated);
+
+  // Get table info
+  const tableInfo = await mysqlClient.getTableInfo('users');
+  console.log('MySQL Table Info:', tableInfo);
+
+  // Dump state
+  await mysqlClient.dump('./snapshots/mysql.json', { pretty: true });
+
+  await mysqlClient.disconnect();
+}
+
 // Run all examples
 async function runExamples() {
   try {
@@ -113,6 +163,9 @@ async function runExamples() {
 
     console.log('\n=== ElasticSearch Example ===');
     await exampleElasticSearch();
+
+    console.log('\n=== MySQL Example ===');
+    await exampleMySQL();
   } catch (error) {
     console.error('Error:', error);
     process.exit(1);
@@ -123,4 +176,4 @@ if (require.main === module) {
   runExamples();
 }
 
-export { exampleRabbitMQ, exampleRedis, exampleElasticSearch };
+export { exampleRabbitMQ, exampleRedis, exampleElasticSearch, exampleMySQL };
