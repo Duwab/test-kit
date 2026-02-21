@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # RabbitMQ service with persistent storage and advanced configuration
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: test-kit-rabbitmq-dev
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+      # Enable additional plugins
+      RABBITMQ_PLUGINS: rabbitmq_top rabbitmq_management_agent
+    ports:
+      - '5672:5672'      # AMQP port
+      - '15672:15672'    # Management UI
+      - '15674:15674'    # WebSocket
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - test-kit-network
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    depends_on:
+      - redis
+      - elasticsearch
+
+  # Redis service with persistent storage
+  redis:
+    image: redis:7.2-alpine
+    container_name: test-kit-redis-dev
+    command: redis-server --appendonly yes --loglevel notice
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - test-kit-network
+    volumes:
+      - redis-data:/data
+    depends_on:
+      - elasticsearch
+
+  # Elasticsearch service with single-node setup for development
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: test-kit-elasticsearch-dev
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.watcher.enabled=false
+      - xpack.ml.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - indices.memory.index_buffer_size=40%
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - test-kit-network
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+networks:
+  test-kit-network:
+    driver: bridge
+    name: test-kit-network-dev
+
+volumes:
+  rabbitmq-data:
+    driver: local
+  redis-data:
+    driver: local
+  elasticsearch-data:
+    driver: local

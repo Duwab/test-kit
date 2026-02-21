@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # RabbitMQ service
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: test-kit-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - '5672:5672'      # AMQP port
+      - '15672:15672'    # Management UI
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-kit-network
+
+  # Redis service
+  redis:
+    image: redis:7.2-alpine
+    container_name: test-kit-redis
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-kit-network
+    volumes:
+      - redis-data:/data
+
+  # Elasticsearch service
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: test-kit-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-kit-network
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+networks:
+  test-kit-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  elasticsearch-data:

@@ -1,0 +1,36 @@
+# Source files
+src/
+examples/
+tests/
+
+# Development files
+.editorconfig
+.env.example
+.eslintrc.json
+.prettierrc
+.github/
+docker-compose*.yml
+jest.config.js
+tsconfig.json
+Makefile
+Dockerfile
+DEVELOPMENT.md
+CONTRIBUTING.md
+QUICKSTART.md
+.git/
+.gitignore
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build artifacts
+*.tgz
+dist/*.map
+
+# Temporary files
+*.log
+test-snapshots/
+coverage/
+.cache/
+.nyc_output/
