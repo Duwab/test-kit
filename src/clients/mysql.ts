@@ -5,7 +5,7 @@
 import * as mysql from 'mysql2/promise';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseTestClient, ClientCredentials, BaseClientOptions, DumpSnapshot, SnapshotOptions } from '../base';
+import { BaseTestClient, DumpSnapshot, SnapshotOptions } from '../base';
 
 export interface TableInfo {
   name: string;
@@ -109,8 +109,8 @@ export class MySQLClient extends BaseTestClient {
     try {
       // Get list of tables
       const [tables] = (await connection.query(
-        `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?`,
-        [database]
+        'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?',
+        [database],
       )) as any;
 
       const tableInfos: TableInfo[] = [];
@@ -120,14 +120,14 @@ export class MySQLClient extends BaseTestClient {
 
         // Get row count
         const [countResult] = (await connection.query(
-          `SELECT COUNT(*) as count FROM \`${tableName}\``
+          `SELECT COUNT(*) as count FROM \`${tableName}\``,
         )) as any;
         const rowCount = (countResult[0] as any)?.count || 0;
 
         // Get columns
         const [columns] = (await connection.query(
-          `SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?`,
-          [database, tableName]
+          'SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?',
+          [database, tableName],
         )) as any;
 
         const columnInfos: ColumnInfo[] = (columns || []).map((col: any) => ({

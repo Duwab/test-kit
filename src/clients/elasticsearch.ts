@@ -5,7 +5,7 @@
 import { Client } from '@elastic/elasticsearch';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseTestClient, ClientCredentials, BaseClientOptions, DumpSnapshot, SnapshotOptions } from '../base';
+import { BaseTestClient, DumpSnapshot, SnapshotOptions } from '../base';
 
 export interface IndexStats {
   name: string;
@@ -248,7 +248,6 @@ export class ElasticSearchClient extends BaseTestClient {
    * Dump ElasticSearch state to a file
    */
   async dump(filepath: string, options?: SnapshotOptions): Promise<void> {
-    const client = await this.getOfficialClient();
     const indices = await this.getAllIndices();
     const data: Record<string, Record<string, any>[]> = {};
 

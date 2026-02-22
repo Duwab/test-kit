@@ -5,7 +5,7 @@
 import Redis from 'ioredis';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseTestClient, ClientCredentials, BaseClientOptions, DumpSnapshot, SnapshotOptions } from '../base';
+import { BaseTestClient, DumpSnapshot, SnapshotOptions } from '../base';
 
 export interface RedisKeyInfo {
   key: string;
@@ -171,7 +171,7 @@ export class RedisClient extends BaseTestClient {
    */
   async getDBStats(): Promise<RedisDBStats> {
     const client = await this.getOfficialClient();
-    const info = await client.info('stats');
+    // const info = await client.info('stats');
     const keys = await client.dbsize();
 
     return {
@@ -193,7 +193,6 @@ export class RedisClient extends BaseTestClient {
    * Dump Redis state to a file
    */
   async dump(filepath: string, options?: SnapshotOptions): Promise<void> {
-    const client = await this.getOfficialClient();
     const data = await this.getAllData();
 
     const snapshot: DumpSnapshot = {

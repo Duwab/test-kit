@@ -5,7 +5,7 @@
 import * as amqp from 'amqplib';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseTestClient, ClientCredentials, BaseClientOptions, DumpSnapshot, SnapshotOptions } from '../base';
+import { BaseTestClient, DumpSnapshot, SnapshotOptions } from '../base';
 
 export interface QueueStats {
   name: string;
@@ -81,14 +81,13 @@ export class RabbitMQClient extends BaseTestClient {
    * Get all queues with their statistics
    */
   async getAllQueues(): Promise<QueueStats[]> {
-    const channel = await this.getChannel();
     const queues: QueueStats[] = [];
 
     // FIXME: this isn't a "live" info (few seconds caching)
     //        → either change it here, or create another function
     const managementUrl = `http://${this.credentials.host}:15672/api/queues`;
     const auth = Buffer.from(
-      `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`
+      `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`,
     ).toString('base64');
 
     try {
@@ -169,7 +168,7 @@ export class RabbitMQClient extends BaseTestClient {
    */
   async declareQueue(
     queueName: string,
-    options?: amqp.Options.AssertQueue
+    options?: amqp.Options.AssertQueue,
   ): Promise<amqp.Replies.AssertQueue> {
     const channel = await this.getChannel();
     return channel.assertQueue(queueName, options);
@@ -181,7 +180,7 @@ export class RabbitMQClient extends BaseTestClient {
   async declareExchange(
     exchangeName: string,
     type: string,
-    options?: amqp.Options.AssertExchange
+    options?: amqp.Options.AssertExchange,
   ): Promise<amqp.Replies.AssertExchange> {
     const channel = await this.getChannel();
     return channel.assertExchange(exchangeName, type, options);
@@ -193,7 +192,7 @@ export class RabbitMQClient extends BaseTestClient {
   async bindQueue(
     queueName: string,
     exchangeName: string,
-    routingKey: string
+    routingKey: string,
   ): Promise<any> {
     const channel = await this.getChannel();
     return channel.bindQueue(queueName, exchangeName, routingKey);
@@ -206,7 +205,7 @@ export class RabbitMQClient extends BaseTestClient {
     exchangeName: string,
     routingKey: string,
     message: Record<string, any>,
-    options?: amqp.Options.Publish
+    options?: amqp.Options.Publish,
   ): Promise<boolean> {
     const channel = await this.getChannel();
     const buffer = Buffer.from(JSON.stringify(message));
@@ -219,7 +218,7 @@ export class RabbitMQClient extends BaseTestClient {
   async dump(filepath: string, options?: SnapshotOptions): Promise<void> {
     const managementUrl = `http://${this.credentials.host}:15672/api/definitions`;
     const auth = Buffer.from(
-      `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`
+      `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`,
     ).toString('base64');
 
     try {
@@ -274,7 +273,7 @@ export class RabbitMQClient extends BaseTestClient {
 
     const managementUrl = `http://${this.credentials.host}:15672/api/definitions`;
     const auth = Buffer.from(
-      `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`
+      `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`,
     ).toString('base64');
 
     try {

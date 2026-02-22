@@ -65,7 +65,7 @@ export abstract class BaseTestClient {
 
   protected async retry<T>(
     fn: () => Promise<T>,
-    maxRetries: number = this.options.retries || 3
+    maxRetries: number = this.options.retries || 3,
   ): Promise<T> {
     let lastError: Error | undefined;
 
