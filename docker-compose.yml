@@ -1,6 +1,31 @@
-version: '3.8'
-
 services:
+  node:
+    # image: node:20
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM node:20
+        WORKDIR /package
+        COPY package* ./
+        RUN npm install
+        COPY . .
+        RUN npm run build
+    command: ["sleep", "infinity"]
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: test
+    networks:
+      - test-kit-network
+    volumes:
+      - .:/package
+
   # RabbitMQ service
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
@@ -61,7 +86,7 @@ services:
 
   # MySQL service
   mysql:
-    image: mysql:8.0-alpine
+    image: mysql:8.0
     container_name: test-kit-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
