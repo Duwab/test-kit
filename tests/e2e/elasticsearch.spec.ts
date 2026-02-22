@@ -68,7 +68,7 @@ describe('ElasticSearchClient', () => {
 
     it('should index a document', async () => {
       await expect(
-        client.indexDocument('test-index', 'doc-1', { name: 'John', age: 30 })
+        client.indexDocument('test-index', 'doc-1', { name: 'John', age: 30 }),
       ).resolves.not.toThrow();
     });
 
@@ -141,7 +141,7 @@ describe('ElasticSearchClient', () => {
 
     it('should dump index state to file', async () => {
       await expect(
-        client.dump('./test-snapshots/es-dump.json', { pretty: true })
+        client.dump('./test-snapshots/es-dump.json', { pretty: true }),
       ).resolves.not.toThrow();
     });
 

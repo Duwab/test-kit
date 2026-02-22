@@ -13,7 +13,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "docker-compose -f docker-compose.yml up -d && jest --testPathPattern=e2e && docker-compose -f docker-compose.yml down",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src tests --ext .ts",
     "format": "prettier --write src",
     "clean": "rm -rf dist"
   },

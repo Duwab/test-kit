@@ -106,7 +106,7 @@ describe('RedisClient', () => {
     it('should dump state to file', async () => {
       await client.set('key1', 'value1');
       await expect(
-        client.dump('./test-snapshots/redis-dump.json', { pretty: true })
+        client.dump('./test-snapshots/redis-dump.json', { pretty: true }),
       ).resolves.not.toThrow();
     });
 

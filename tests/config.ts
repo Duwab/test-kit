@@ -47,7 +47,7 @@ export async function ensureSnapshotDir(): Promise<void> {
 export async function waitFor(
   condition: () => Promise<boolean>,
   timeout = 5000,
-  interval = 100
+  interval = 100,
 ): Promise<void> {
   const start = Date.now();
 

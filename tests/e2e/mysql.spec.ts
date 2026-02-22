@@ -200,7 +200,7 @@ describe('MySQLClient', () => {
       await client.insert('data_table', { value: 'test-value' });
 
       await expect(
-        client.dump('./test-snapshots/mysql-dump.json', { pretty: true })
+        client.dump('./test-snapshots/mysql-dump.json', { pretty: true }),
       ).resolves.not.toThrow();
     });
 
