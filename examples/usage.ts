@@ -3,6 +3,7 @@
  */
 
 import { RabbitMQClient, RedisClient, ElasticSearchClient, MySQLClient } from '../src/index';
+// import { RabbitMQClient, RedisClient, ElasticSearchClient, MySQLClient } from '../dist/index';
 
 // Example: Using RabbitMQ Client
 async function exampleRabbitMQ(): Promise<void> {
