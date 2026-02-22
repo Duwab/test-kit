@@ -5,7 +5,7 @@
 import { RabbitMQClient, RedisClient, ElasticSearchClient, MySQLClient } from '../src/index';
 
 // Example: Using RabbitMQ Client
-async function exampleRabbitMQ() {
+async function exampleRabbitMQ(): Promise<void> {
   const rabbitmqClient = new RabbitMQClient({
     host: process.env.RABBITMQ_HOST || 'localhost',
     port: parseInt(process.env.RABBITMQ_PORT || '5672'),
@@ -34,7 +34,7 @@ async function exampleRabbitMQ() {
 }
 
 // Example: Using Redis Client
-async function exampleRedis() {
+async function exampleRedis():Promise<void> {
   const redisClient = new RedisClient({
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379'),
@@ -64,7 +64,7 @@ async function exampleRedis() {
 }
 
 // Example: Using ElasticSearch Client
-async function exampleElasticSearch() {
+async function exampleElasticSearch(): Promise<void> {
   const esClient = new ElasticSearchClient({
     host: process.env.ELASTICSEARCH_HOST || 'localhost',
     port: parseInt(process.env.ELASTICSEARCH_PORT || '9200'),
@@ -108,7 +108,7 @@ async function exampleElasticSearch() {
 }
 
 // Example: Using MySQL Client
-async function exampleMySQL() {
+async function exampleMySQL(): Promise<void> {
   const mysqlClient = new MySQLClient({
     host: process.env.MYSQL_HOST || 'localhost',
     port: parseInt(process.env.MYSQL_PORT || '3306'),
@@ -159,7 +159,7 @@ async function exampleMySQL() {
 }
 
 // Run all examples
-async function runExamples() {
+async function runExamples(): Promise<void> {
   try {
     console.log('=== RabbitMQ Example ===');
     await exampleRabbitMQ();
