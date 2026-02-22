@@ -34,9 +34,9 @@ export class ElasticSearchClient extends BaseTestClient {
         auth:
           this.credentials.username && this.credentials.password
             ? {
-                username: this.credentials.username,
-                password: this.credentials.password,
-              }
+              username: this.credentials.username,
+              password: this.credentials.password,
+            }
             : undefined,
         requestTimeout: this.options.timeout || 5000,
       });
@@ -88,6 +88,13 @@ export class ElasticSearchClient extends BaseTestClient {
     return indices;
   }
 
+  async deleteAllIndices(): Promise<void> {
+    const indices = await this.getAllIndices();
+    for (const index of indices) {
+      await this.deleteIndex(index.name);
+    }
+  }
+
   /**
    * Get statistics for a specific index
    */
@@ -129,7 +136,7 @@ export class ElasticSearchClient extends BaseTestClient {
   async indexDocument(
     indexName: string,
     documentId: string,
-    document: Record<string, any>
+    document: Record<string, any>,
   ): Promise<void> {
     const client = await this.getOfficialClient();
     try {

@@ -150,6 +150,14 @@ export class MySQLClient extends BaseTestClient {
     }
   }
 
+  async deleteAllTables(): Promise<void> {
+    const tables = await this.getAllTables();
+
+    for (const table of tables) {
+      await this.dropTable(table.name);
+    }
+  }
+
   /**
    * Get information about a specific table
    */

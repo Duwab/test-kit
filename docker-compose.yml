@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile_inline: |
         FROM node:20
+        ENV NPM_CONFIG_ENGINE_STRICT=true
         WORKDIR /package
         COPY package* ./
         RUN npm install
@@ -12,6 +13,7 @@ services:
         RUN npm run build
     command: ["sleep", "infinity"]
     environment:
+      # providers
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USERNAME: guest
@@ -33,6 +35,11 @@ services:
       - test-kit-network
     volumes:
       - .:/package
+    depends_on:
+      - rabbitmq
+      - redis
+      - elasticsearch
+      - mysql
 
   # RabbitMQ service
   rabbitmq:

@@ -29,7 +29,8 @@ npm install -D @duwab/test-kit
 To start all required services:
 
 ```bash
-docker-compose up -d
+docker compose up -d
+docker compose exec node npx ts-node examples/usage.ts
 ```
 
 This will start:
@@ -41,7 +42,7 @@ This will start:
 To stop services:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Usage Examples

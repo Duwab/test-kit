@@ -84,6 +84,8 @@ export class RabbitMQClient extends BaseTestClient {
     const channel = await this.getChannel();
     const queues: QueueStats[] = [];
 
+    // FIXME: this isn't a "live" info (few seconds caching)
+    //        → either change it here, or create another function
     const managementUrl = `http://${this.credentials.host}:15672/api/queues`;
     const auth = Buffer.from(
       `${this.credentials.username || 'guest'}:${this.credentials.password || 'guest'}`
@@ -120,6 +122,14 @@ export class RabbitMQClient extends BaseTestClient {
     }
 
     return queues;
+  }
+
+  async deleteAllQueues(): Promise<void> {
+    const queues = await this.getAllQueues();
+
+    for (const queue of queues) {
+      await this.deleteQueue(queue.name);
+    }
   }
 
   /**

@@ -84,6 +84,14 @@ export class RedisClient extends BaseTestClient {
     return keyInfos;
   }
 
+  async deleteAllKeys(): Promise<void> {
+    const keys = await this.getAllKeys();
+
+    for (const key of keys) {
+      await this.delete(key.key);
+    }
+  }
+
   /**
    * Get value by key
    */
