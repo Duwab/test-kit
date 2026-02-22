@@ -28,6 +28,7 @@ coverage/
 # Snapshots
 __snapshots__/
 *.snap
+test-snapshots/
 
 # Logs
 logs/

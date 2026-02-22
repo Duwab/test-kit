@@ -17,6 +17,16 @@ describe('ElasticSearchClient', () => {
   beforeAll(async () => {
     client = new ElasticSearchClient(credentials);
     await client.connect();
+
+    // Clean up test indices for clean test start
+    const indicesToDelete = [
+      'test-index',
+      'test-index-1',
+      'test-index-2',
+    ];
+    for (const index of indicesToDelete) {
+      await client.deleteIndex(index).catch(() => {});
+    }
   });
 
   afterAll(async () => {

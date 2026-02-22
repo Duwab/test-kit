@@ -122,7 +122,7 @@ describe('MySQLClient', () => {
       const updated = await client.update(
         'products',
         { price: 15.0 },
-        { name: 'Product' }
+        { name: 'Product' },
       );
 
       expect(updated).toBeGreaterThan(0);
@@ -130,7 +130,7 @@ describe('MySQLClient', () => {
       const result = await client.queryOne('SELECT * FROM products WHERE name = ?', [
         'Product',
       ]);
-      expect((result as any)?.price).toBe(15);
+      expect((result as any)?.price).toBe('15.00');
     });
 
     it('should delete rows', async () => {

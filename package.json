@@ -15,8 +15,7 @@
     "test:e2e": "docker-compose -f docker-compose.yml up -d && jest --testPathPattern=e2e && docker-compose -f docker-compose.yml down",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
-    "clean": "rm -rf dist",
-    "prepare": "npm run build"
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "test-kit",
@@ -48,5 +47,8 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
