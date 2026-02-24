@@ -1,6 +1,15 @@
 # Test Kit
 
+## DISCLAIMER: this project is WIP
+
+<p class="alert alert-danger">
+  Package expected to be released before May, 1st 2026
+</p>
+
+----
+
 A npm package written in Typescript to help running e2e tests for NodeJS and Typescript micro-services for distributed architectures.
+
 
 ## Main Features
 
